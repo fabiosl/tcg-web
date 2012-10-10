@@ -1,0 +1,47 @@
+<!--control_panel.html-->
+{% extends "base.html" %}
+
+{% block javascript_block %}
+$(document).ready(function() {
+});
+{% endblock %}
+
+{% block conteudo%}
+<div class="centered-resource well">
+	<form class="centered-resource centered-text" action="/edit_account/?modified=true" method="post">
+		{% csrf_token %}
+		<div>
+		<input name="nickname" type="text"  placeholder="Name">
+		</div>
+		<div>
+		<input name="old_password" type="password"  placeholder="Old password">
+		</div>
+		<div>
+		<input name="new_password" type="password"  placeholder="New password">
+		</div>
+		<div>
+		<input name="new_password_confirmation" type="password"  placeholder="Confirm new password">
+		</div>
+		<div class="centered-resource">
+		<button type="submit" class="btn btn-primary span3 unmargined-left">
+			Save Changes
+		</button>
+		</div >
+		
+		
+		
+		{% if no_change_performed %}
+			
+		{% elif changed_user_data_successfully %} 
+			<div class="control-group success">
+			<label class="control-label" style="margin-top: 15px" > Changed Successfully! </label>
+		</div>
+		
+		{% else %} 
+		<div class="control-group error">
+			<label class="control-label" style="margin-top: 15px" > Wrong password! </label>
+		</div>
+		{% endif %}
+	</form>
+</div>
+{%endblock%}

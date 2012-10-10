@@ -1,0 +1,208 @@
+footer{
+	text-align:center;
+}
+
+.zoomable{
+	 cursor:cursor:url(/static/img/au-icon.png), -moz-zoom-in; 
+}
+
+.tcg-icon{
+	margin-right:3px;
+}
+
+
+.centered-resource {
+    margin: 0 auto;
+    display: table;
+    
+}
+
+.main-hall-box {
+	background-color: #EEE;
+	margin: 10px;
+	padding: 20px 20px 20px 20px;
+	box-shadow: #AAA 0px 1px 6px 0px;
+	float:left;
+}
+
+.main-hall-box h3{
+	font-family: 'Alfa Slab One' !important;
+	font-style: normal;
+	font-weight: bold;
+	font-size:25px;
+	white-space: nowrap;
+	text-decoration:underline;
+}
+
+.main-hall-box div{
+	margin:10px 0px 0px 0px;
+}
+
+.main-hall-box #player-list{
+	display:block;
+}
+
+.main-hall-box #player-list .nav li {
+	margin:4px;
+	border-bottom: 1px;	
+}
+.main-hall-box #player-list .nav li a i {
+	margin-right:5px;
+}
+.centered-text{
+	text-align:center;	
+}
+.unmargined-left{
+	margin-left: 0px;
+}
+
+.ui-button{
+	margin-bottom: 10px;		
+}
+
+.card{
+	margin:10px 20px;
+	width: 300px;
+	height:80px;
+	position:relative;
+	border: 2px solid #CCC;
+	box-shadow: 0px 0px 4px #AAA;
+	float:left;
+}
+
+.card .data .add_remove {
+	height: 50px;
+	margin: 15px 0px 15px 0px;
+	right: 0px;
+	bottom: 0px;
+	position:absolute;
+	cursor:pointer;
+	
+}
+
+.card .card_logo img{
+	margin: 5px ;
+	height: 70px;
+	float: left;
+}
+
+html {
+	font-family: "Helvetica Neue";
+}
+
+.deck_cards{
+	border: 2px solid #CCC;
+	width: 350px;
+	margin:10px;
+	display: block;
+	float:left;
+}
+
+.deck_cards label{
+	font-size: 24px;
+	text-decoration:underline; 
+}
+
+.deck-controls{
+	background-color: #E3E3E4;
+	margin: 7px 5px 0px 7px;
+	text-align:center;
+	border-radius: 8px;
+}
+
+.deck-controls div{
+	margin: 10px 10px 10px 10px;
+}
+.deck-controls button{
+	width:150px;
+	
+}
+
+
+
+.deck_attributes{
+	position:relative;
+	float:left;
+}
+
+.normal_cursor {
+	cursor:default;
+}
+
+.card_properties {
+	display: block;
+	float:left;
+	height: 52px;
+}
+
+
+
+.card_properties label{
+	font-size:12px;
+	margin:0px;
+	padding: 0px;
+	text-decoration: none;
+}
+
+.card_properties div{
+	width:45px;
+	float:left;
+	margin: 0px 15px 0px 5px;
+}
+
+#deck_cards_counter{
+	font-size:20px;
+	
+}
+#deck_cards_name{
+	font-size: 24px;
+	text-decoration: underline;
+}
+
+#deck_cards_counter{
+	font-size: 24px;
+	right: 0px;
+	color:#A6A6A6;
+}
+
+#deck_attributes{
+	margin: 10px 20px 0px 20px;
+	height: 25px;
+}
+
+#edit_deck_title_icon, #delete_deck_icon{
+	cursor:pointer;
+	padding-bottom: 10px;
+}
+
+
+.room {
+	width:350px;
+	height:80px;
+	background-color: #93C3E4; 
+	border-radius: 8px;
+	box-shadow: #93C3E4 0px 0px 6px 0px;
+	padding: 10px;
+	margin:20px;
+	
+}
+
+.room:hover{
+	background-color: #9ED1F3;
+}
+
+.room h1 {
+	font-size:28px;
+	font-size: 20px;
+	display: inline;
+	
+}
+
+.room .status {
+	font-size:28px;
+	color: #FFFFFF; 
+}
+
+.room label h3{
+	color: #FFFFFF;
+}
