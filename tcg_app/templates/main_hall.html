@@ -96,16 +96,16 @@
         function createNewRoom(){
 		  	socket.emit('createRoom', $('#roomName').val());
 		 	$('#fancybox-close').trigger('click'); //"clicks" to close fancybox
-			$('#rooms').append(
-				'<div id="room' + Number(Number($(".room").length) + 1) +'"class="room" style="margin-top:20px;display:none">'+
-					'<h1>'+$('#roomName').val()+'</h1>'+
-					'<label style="float:right;margin-top:11px;">{{user_nickname|capfirst}}</label>'+
-					'<label class="centered-resource status">Waiting</label>'+
-					'<button class="btn" style>Join</button>'+
-					'<h3 style="float:right; position:relative; bottom:0px; right:0px;">2/4</h3>'+				
-				'</div>'
-			);
-			$('#room' + $('.room').length).show("puff");
+			
+            $room = '<div class="room" style="margin-top:20px;">'+
+                    '<h1>'+$('#roomName').val()+'</h1>'+
+                    '<label style="float:right;margin-top:11px;">{{user_nickname|capfirst}}</label>'+
+                    '<label class="centered-resource status">Waiting</label>'+
+                    '<button class="btn" style>Join</button>'+
+                    '<h3 style="float:right; position:relative; bottom:0px; right:0px;">2/4</h3>'+              
+                '</div>'
+
+            $('#rooms').append($room);
 			$('#roomName').val(''); //clean the field
         }
         
@@ -122,52 +122,45 @@
 <link href="//fonts.googleapis.com/css?family=IM+Fell+English:400,400italic|Open+Sans" rel="stylesheet" type="text/css">
 
 <div class="centered-resource">
-                <div class="main-hall-box">
-                        <h3>User Decks</h3>
-                        <div>
-                        {% if user_decks %}
-                        
-                        <select id="deck_select" class="span2" action="/editdeck">
-                                {% for deck in user_decks %}
-                                <option>{{deck.firstChild.data}}</option>
-                                {% empty %}
-                                <option>No decks!</option>
-                                {%endfor%}
-                        </select>
-                        <button onclick="editDeck()" class="btn btn-success ui-button" style:"width:100%">
-                                Edit deck
-                        </button>
-                        <button onclick="createDeck()" class="btn btn-primary ui-button" style:"display:block">
-                                Create a new deck
-                        </button>
-                        {%else%}
-                        <button onclick="createDeck()" class="btn btn-primary ui-button" style:"display:block">
-                                Create a new deck
-                        </button>
-                        {% endif %}
-                        </div>
+        <div class="main-hall-box">
+                <h3>User Decks</h3>
+                <div>
+                {% if user_decks %}
+                
+                <select id="deck_select" class="span2" action="/editdeck">
+                        {% for deck in user_decks %}
+                        <option>{{deck.firstChild.data}}</option>
+                        {% empty %}
+                        <option>No decks!</option>
+                        {%endfor%}
+                </select>
+                <button onclick="editDeck()" class="btn btn-success ui-button" style:"width:100%">
+                        Edit deck
+                </button>
+                <button onclick="createDeck()" class="btn btn-primary ui-button" style:"display:block">
+                        Create a new deck
+                </button>
+                {%else%}
+                <button onclick="createDeck()" class="btn btn-primary ui-button" style:"display:block">
+                        Create a new deck
+                </button>
+                {% endif %}
                 </div>
-        <!--div class="main-hall-box">
-                        <h3>Main Hall</h3>
-        </div><!--/span-->
+        </div>
         <div class="main-hall-box">
                         <h3>Online Users</h3>
                         <div id="player-list">
-                         <img class="centered-resource" src="/static/img/ajax-loader-big.gif" /> 
-                         <ul id="playersList" class="nav">
-                        </ul>
-                </div>
+                            <img class="centered-resource" src="/static/img/ajax-loader-big.gif" /> 
+                            <ul id="playersList" class="nav"></ul>
+                        </div>
                         
         </div><!--/span-->
-                
 </div>
 
 <!-- Rooms -->
 <div class="centered-resource">
-	<div id="rooms" class="main-hall-box" style="width:322px;float:left;">
+	<div id="rooms" class="main-hall-box" style="width:373px;float:left;">
 		<h3 style="display:inline;" >Rooms</h3>
-		<!--a class="inline" href="#createRoomDiv"></a-->
-		
 		
 		<a style="float:right;"id="inline" href="#createRoomDiv"><button class="btn btn-primary ui-button">Create a new room</button></a>
 
@@ -178,17 +171,7 @@
 				<button id="createNewRoomButton" class="centered-resource btn btn-primary ui-button">Create room</button>
 			</form>
 		</div>
-		
-		<!-- div class="room" style="margin-top:20px;">
-			<h1>Sparta</h1>
-			<label style="float:right;margin-top:11px;">OwnerName</label>
-			<label class="centered-resource status">Waiting</label>
-			<button class="btn" style>Join</button>
-			<h3 style="float:right; position:relative; bottom:0px; right:0px;">2/4</h3>				
-		</div-->
-		
-		
-		</div>
+    </div>
 </div>
 
 <div class="centered-resource">

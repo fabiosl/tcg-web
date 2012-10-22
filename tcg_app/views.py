@@ -19,9 +19,6 @@ cards_dict = {}
 
 users_dictionary = {} #logged user id -> password; 
 
-def _isUserInfoOnCache(request):
-    return request.session.get('user_id', None) and request.session.get('user_nickname', None) and request.session.get('user_score', None)   and request.session.get('user_play_counter', None) and request.session.get('user_win_counter', None) and  request.session.get('user_interrupt_counter', None) and request.session.get('user_rank', None) 
-    
 def _setUserInfoOnCache(request, user_id):
     paramDict = {'userId': user_id}
     result = http_handler.do_post(conf.getUserInfoURL(), paramDict)
