@@ -88,17 +88,7 @@ def _get_language(request):
             return lang
         else: 
             return ld.get_default_language()
-
-def _logoutUser(request):
-    request.session['user_id'] = None
-    request.session['user_nickname'] = None
-    request.session['user_score'] = None 
-    request.session['user_play_counter'] = None 
-    request.session['user_win_counter'] = None 
-    request.session['user_interrupt_counter'] = None 
-    request.session['user_rank'] = None 
-    request.session['user_decks_num'] = None 
-
+    
     
 
 def _getAttributeFromResponseData(attribute, response_data_list):
@@ -111,10 +101,20 @@ def _getAttributeFromResponseData(attribute, response_data_list):
 def about(request):
     return render_to_response ('about.html', _getViewsConfig(request))
 
+def logout(request):
+    request.session['user_id'] = None
+    request.session['user_nickname'] = None
+    request.session['user_score'] = None 
+    request.session['user_play_counter'] = None 
+    request.session['user_win_counter'] = None 
+    request.session['user_interrupt_counter'] = None 
+    request.session['user_rank'] = None 
+    request.session['user_decks_num'] = None 
+    return render_to_response('home.html', _getViewsConfig(request))
+
+
 def home(request):
     request.session.set_expiry(0);
-    if(request.GET.get('logout', 'false') == 'true'):
-        _logoutUser(request)
     
     if(_isLogged(request)):
         return main_hall(request);

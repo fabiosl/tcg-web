@@ -28,7 +28,7 @@
 
     socket.on('error', error);
 	
-	function error() {
+	function error(e) {
         writeMessageOnChat('System', e ? e : 'A unknown error occurred');
     }
 	
@@ -104,16 +104,6 @@
 		clear();
 		return $('#chat').addClass('nickname-set');
     });
-            
-	function logout(){
-		socket.emit('logout', "{{user_id}}");
-		window.location = "/?logout=true"
-	};
-	
-
-	//Apply to button: 
-	$("#logoutButton").attr("onclick","logout();");
-
 
     //keep socket alive
     function worker() {

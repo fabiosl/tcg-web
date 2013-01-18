@@ -20,7 +20,7 @@ class CheckLoggedUsersThread extends Thread {
 
 public class GameServer {
 
-	static boolean DEBUG = false;
+	static boolean DEBUG = true;
 	static final int GAME_SERVER_PORT = 9000;
 	
 	public static void main(String[] args) {
