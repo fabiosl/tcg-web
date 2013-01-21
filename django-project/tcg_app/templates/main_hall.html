@@ -1,7 +1,7 @@
 <!--main_hall.html-->
 {% extends "base.html" %}
 
-{% block conteudo%}
+{% block content%}
 
 
 <script src="/static/js/deck.js" type="text/javascript"></script>
@@ -136,33 +136,33 @@
         <button onclick="createDeck()" class="btn btn-primary ui-button" style:"display:block">Create a new deck</button>
         {% endif %}
         </div>
-	</div>
-	
-	<div class="main-hall-box">
+    </div>
+    
+    <div class="main-hall-box">
         <h3>Online Users</h3>
         <div id="player-list">
             <img class="centered-resource" src="/static/img/ajax-loader-big.gif" /> 
             <ul id="playersList" class="nav"></ul>
-        </div>
-        
-	</div><!--/span-->
+        </div>        
+    </div><!--/span-->
 </div>
 
 <!-- Rooms -->
 <div class="centered-resource">
-	<div id="rooms" class="main-hall-box" style="width:373px;float:left;">
-		<h3 style="display:inline;" >Rooms</h3>	
-		<a style="float:right;"id="inline" href="#createRoomDiv"><button class="btn btn-primary ui-button">Create a new room</button></a>
-		<div style="display:none">
-			<form form onsubmit="javascript:createNewRoom($('#roomName').val()); return false;" id="createRoomDiv">
-				<input id="roomName" type="text" placeholder="Room name"><br />
-				<input disabled="disabled" name="roomPassword" type="text" placeholder="Room password"><br />
-				<button id="createNewRoomButton" class="centered-resource btn btn-primary ui-button">Create room</button>
-			</form>
-		</div>
+    <div id="rooms" class="main-hall-box" style="width:373px;float:left;">
+        <h3 style="display:inline;" >Rooms</h3>	
+        <a style="float:right;"id="inline" href="#createRoomDiv"><button class="btn btn-primary ui-button">Create a new room</button></a>
+        <div style="display:none">
+            <form form onsubmit="javascript:createNewRoom($('#roomName').val()); return false;" id="createRoomDiv">
+                <input id="roomName" type="text" placeholder="Room name"><br />
+                <input disabled="disabled" name="roomPassword" type="text" placeholder="Room password"><br />
+                <button id="createNewRoomButton" class="centered-resource btn btn-primary ui-button">Create room</button>
+            </form>
+        </div>
     </div>
 </div>
 
+<!-- Chat -->
 <div class="centered-resource">
     <form onsubmit="javascript:socket.sendChatMessage($('#message').val());clear_UI();return false;"  id="chat">
         <div id="messages">
