@@ -11,114 +11,85 @@
 <script type="text/javascript" src="/static/js/jquery.easing-1.3.pack.js"></script>
 <script type="text/javascript" src="/static/js/jquery.mousewheel-3.0.4.pack.js"></script>
 
+<script type="text/javascript" src="/static/js/game_socket.js"></script>
+
+
 <link rel="stylesheet" href="/static/style/jquery.fancybox-1.3.4.css" type="text/css" media="screen" />
 <link href="/static/style/chat.css" rel="stylesheet">
 <script src="/static/js/deck.js" type="text/javascript"></script>
 <script src="/static/js/socket.io.js"></script>
 
 <script>
-    var socket = io.connect('{{java_game_client_host}}');
+    var USER_NICKNAME = '{{user_nickname|capfirst}}'
 
-    socket.on('connect', connect);
-    socket.on('updateLoggedUsers', updateLoggedUsers);
-    socket.on('roomCreation', roomCreation)
-    socket.on('chatMessage', writeMessageOnChat);
-    socket.on('reconnect',reconnect);
-    socket.on('reconnecting', reconnecting);
-
-    socket.on('error', error);
-	
-	function error(e) {
-        writeMessageOnChat('System', e ? e : 'A unknown error occurred');
-    }
-	
-	function reconnecting() {
-        writeMessageOnChat('System', 'Attempting to re-connect to the server');
-    }
-	
-	function connect() {
-		notifyChat()
-        worker();
+    function createNewRoom(roomName){
+        socket.sendCreateRoomSignal(roomName);
+        createNewRoom_UI(USER_NICKNAME,roomName,1,999,false);
     }
     
-    function reconnect(){
-        clearChatScreen();
-        writeMessageOnChat('System', 'Reconnected to the server');
-    }
-    
-	function updateLoggedUsers(nicknames) {
-		updateChatTopBar(nicknames);
-		updateOnlineUsersMenu(nicknames);
-    }
-    
-    function roomCreation(hostNickName,roomName,numOfPlayers,roomSid,isPlaying){
-        alert("a room has been created")         
-    }
-
-	function chatMessage(from,msg){
-		writeMessageOnChat(from, msg);
-	}
-
-    // dom manipulation
-    
-    function updateChatTopBar(nicknames){
+    /****** UI Jquery Functions *******/
+    function updateChatTopBar_UI(nicknames){
  		$('#nicknames').empty().append($('<span>Online: </span>'));
         for (var i in nicknames) {
                 $('#nicknames').append($('<b>').text(nicknames[i]));
         }
     }
     
-    function updateOnlineUsersMenu(nicknames){
+    function error_UI(e) {
+        writeMessageOnChat_UI('System', e ? e : 'A unknown error occurred');
+    };
+    
+    function updateLoggedUsers_UI (nicknames){
+        updateChatTopBar_UI(nicknames);
+        updateOnlineUsersMenu_UI(nicknames);
+    };
+    
+    function roomCreation_UI(hostNickName,roomName,numOfPlayers,roomSid,isPlaying){
+        alert("a room has been created")
+        createNewRoom_UI(hostNickName,roomName,numOfPlayers,roomSid,isPlaying);
+        
+    };
+    
+    function reconnect_UI(){
+        clearChatScreen_UI();
+        writeMessageOnChat_UI('System', 'Reconnected to the server');
+    };
+    
+    function reconnecting_UI() {
+        writeMessageOnChat_UI('System', 'Attempting to re-connect to the server');
+    };
+    
+    
+    function updateOnlineUsersMenu_UI(nicknames){
         $('#player-list').html("")
         for (var i in nicknames) {
         		$('#player-list').append('<a href="#"><i class="icon-user"></i>'+nicknames[i]+'</a><br />');
         }
-    }
+    };
     
-    function clearChatScreen(){
+    function clearChatScreen_UI(){
     	$('#lines').remove();
-    }
+    };
     
-    function writeMessageOnChat(from, msg) {
+    function writeMessageOnChat_UI(from, msg) {
         $('#lines').append($('<p>').append($('<b>').text(from), msg));
         $('#lines').get(0).scrollTop = 10000000;
-    }
+    };
     
     
-    function notifyChat(){
+    function notifyChat_UI(){
 		$('#chat').addClass('connected');
         $('#lines').append($('<p>').append($('<em>').text("You are connected to the chat!")));
-    }
-    
-    
-    function sendChatMessage() {
-        socket.emit('chatMessage', $('#message').val());
-        clear();
     };
-
-    function clear() {
+    
+    function clear_UI() {
         $('#message').val('').focus();
     };
     
-    socket.emit('establishConnection', '{{user_id}}',"{{password}}",  function(set) {
-		clear();
-		return $('#chat').addClass('nickname-set');
-    });
-
-    //keep socket alive
-    function worker() {
-        socket.emit('ping', 'ping');
-        setTimeout(worker, 30000);
-    };
     
-    function sendCreateRoomSignal(roomName){
-        socket.emit('createRoom', roomName);
-    }
-    
-    function createNewRoom(hostNickName,roomName,numOfPlayers,roomSid,isPlaying){
-	  	
+    function createNewRoom_UI(hostNickName,roomName,numOfPlayers,roomSid,isPlaying){
 	 	$('#fancybox-close').trigger('click'); //"clicks" to close fancybox
-		
+        
         $room = '<div class="room" style="margin-top:20px;">'+
                 '<h1>'+roomName+'</h1>'+
                 '<label style="float:right;margin-top:11px;">'+hostNickName+'</label>'+
@@ -131,11 +102,12 @@
 		$('#roomName').val(''); //clean the field
     }
     
-    
-    
     function init(){
-    	$("a#inline").fancybox();
-    	window.addEventListener('blur', function(){worker();},false);//prevents disconnection on tab change
+        $("a#inline").fancybox();
+        socket =  new GameSocket('{{java_game_client_host}}')
+        socket.connect('{{user_id}}',"{{password}}")
+        window.addEventListener('blur', socket.worker(),false); //prevents disconnection on tab change
+        socket.worker()
     }
     
     document.ready = init;
@@ -144,50 +116,45 @@
 <link href="//fonts.googleapis.com/css?family=IM+Fell+English:400,400italic|Open+Sans" rel="stylesheet" type="text/css">
 
 <div class="centered-resource">
-        <div class="main-hall-box">
-                <h3>User Decks</h3>
-                <div>
-                {% if user_decks %}
-                
-                <select id="deck_select" class="span2" action="/editdeck">
-                        {% for deck in user_decks %}
-                        <option>{{deck.firstChild.data}}</option>
-                        {% empty %}
-                        <option>No decks!</option>
-                        {%endfor%}
-                </select>
-                <button onclick="editDeck()" class="btn btn-success ui-button" style:"width:100%">
-                        Edit deck
-                </button>
-                <button onclick="createDeck()" class="btn btn-primary ui-button" style:"display:block">
-                        Create a new deck
-                </button>
-                {%else%}
-                <button onclick="createDeck()" class="btn btn-primary ui-button" style:"display:block">
-                        Create a new deck
-                </button>
-                {% endif %}
-                </div>
+	<div class="main-hall-box">
+        <h3>User Decks</h3>
+        <div>
+        {% if user_decks %}
+        
+        <select id="deck_select" class="span2" action="/editdeck">
+	        {% for deck in user_decks %}
+	        <option>{{deck.firstChild.data}}</option>
+	        {% empty %}
+	        <option>No decks!</option>
+	        {%endfor%}
+        </select>
+        
+        <button onclick="editDeck()" class="btn btn-success ui-button" style:"width:100%">Edit deck</button>
+        <button onclick="createDeck()" class="btn btn-primary ui-button" style:"display:block">Create a new deck</button>
+        
+        {%else%}
+        <button onclick="createDeck()" class="btn btn-primary ui-button" style:"display:block">Create a new deck</button>
+        {% endif %}
         </div>
-        <div class="main-hall-box">
-                        <h3>Online Users</h3>
-                        <div id="player-list">
-                            <img class="centered-resource" src="/static/img/ajax-loader-big.gif" /> 
-                            <ul id="playersList" class="nav"></ul>
-                        </div>
-                        
-        </div><!--/span-->
+	</div>
+	
+	<div class="main-hall-box">
+        <h3>Online Users</h3>
+        <div id="player-list">
+            <img class="centered-resource" src="/static/img/ajax-loader-big.gif" /> 
+            <ul id="playersList" class="nav"></ul>
+        </div>
+        
+	</div><!--/span-->
 </div>
 
 <!-- Rooms -->
 <div class="centered-resource">
 	<div id="rooms" class="main-hall-box" style="width:373px;float:left;">
-		<h3 style="display:inline;" >Rooms</h3>
-		
+		<h3 style="display:inline;" >Rooms</h3>	
 		<a style="float:right;"id="inline" href="#createRoomDiv"><button class="btn btn-primary ui-button">Create a new room</button></a>
-
 		<div style="display:none">
-			<form form onsubmit="javascript:sendCreateRoomSignal($('#roomName').val());createNewRoom('{{user_nickname|capfirst}}',$('#roomName').val(),1,999,false);return false;" id="createRoomDiv">
+			<form form onsubmit="javascript:createNewRoom($('#roomName').val()); return false;" id="createRoomDiv">
 				<input id="roomName" type="text" placeholder="Room name"><br />
 				<input disabled="disabled" name="roomPassword" type="text" placeholder="Room password"><br />
 				<button id="createNewRoomButton" class="centered-resource btn btn-primary ui-button">Create room</button>
@@ -197,16 +164,15 @@
 </div>
 
 <div class="centered-resource">
-        <form onsubmit="javascript:sendChatMessage();return false;"  id="chat">
-                        <div id="messages">
-                                <div id="nicknames"> <label>Connecting to Game Server </label></div>
-                                <div id="lines"></div>
-                        </div>
-                        
-                        <div id="send-message">
-                                <input id="message">
-                                <button id="sendButton" >Send</button>
-                        </div>
-        </form>
+    <form onsubmit="javascript:socket.sendChatMessage($('#message').val());clear_UI();return false;"  id="chat">
+        <div id="messages">
+            <div id="nicknames"> <label>Connecting to Game Server </label></div>
+            <div id="lines"></div>
+        </div>
+        <div id="send-message">
+            <input id="message">
+            <button id="sendButton" >Send</button>
+        </div>
+    </form>
 </div>
 {%endblock%}
