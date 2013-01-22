@@ -1,5 +1,10 @@
 package agent.processor;
 
+import java.util.Set;
+import java.util.TreeSet;
+
+import gameserver.GameHandler;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -7,6 +12,7 @@ import org.json.JSONObject;
 import agent.PlayersController;
 import agent.util.Util;
 
+/*This project needs a MAJOR refactoring. The Java Client was developed by someone else and I'm currently refactoring almost everything.*/
 
 public class DarkstarProcessor {
 	private static DarkstarProcessor instance;
@@ -103,24 +109,33 @@ public class DarkstarProcessor {
 		requestJoinChannel(userId, "LobbyChannel");
 	}
 	
-
-	 /**
-     * Sends data to the darkstar server to inform the server
-     * that the agent is joining a channel
-     * 
-     * @param channelName	channel being joined by agent
-     */
+	public void loadRoomList(JSONObject jsonObj){
+    	try{
+    	    JSONObject parameters = jsonObj.getJSONObject("parameters");
+    	    JSONArray roomsJsonArray = parameters.getJSONArray("rooms");
+    	    
+    	    Set<String> result = new TreeSet<String>();
+    	    for (int i = 0; i < roomsJsonArray.length(); i++) {
+    	        JSONObject roomJson = roomsJsonArray.getJSONObject(i);
+    	        result.add(roomJson.toString());
+    	    }   
+    	    GameHandler.emit("updateRooms", result);
+    	} catch (JSONException e) {
+ 	        e.printStackTrace();
+    	}
+	}
+	 
     public void requestJoinChannel(String userId,String channelName) {
-    	try {																			// try json object creation and actions
-			JSONObject jsonObjNest = new JSONObject();									// create new JSON object for nested object
-			jsonObjNest.append("channelName", channelName);								// append channel name to nested JSON object
-    		JSONObject jsonObj = new JSONObject();										// create new JSON object
-			jsonObj.append("cmd", "JOIN_CHANNEL");										// append cmd value to JSON object
-			jsonObj.append("scene", "ALL_SCENE");										// append scene value to JSON object
-			jsonObj.append("parameters", jsonObjNest);									// append parameters to JSON object
+    	try {																			
+			JSONObject jsonObjNest = new JSONObject();									
+			jsonObjNest.append("channelName", channelName);								
+    		JSONObject jsonObj = new JSONObject();										
+			jsonObj.append("cmd", "JOIN_CHANNEL");										
+			jsonObj.append("scene", "ALL_SCENE");										
+			jsonObj.append("parameters", jsonObjNest);									
 			PlayersController.sendSessionMsgToDarkstar(PlayersController.getPlayerClient(userId), jsonObj.toString());
-		} catch (Exception e) {															// catch exceptions
-			e.printStackTrace();														// print stack trace
+		} catch (Exception e) {															
+			e.printStackTrace();														
 		}
     }    
 
@@ -158,6 +173,11 @@ public class DarkstarProcessor {
 			else if (("CREATE_ROOM").equals(cmd)) {
 				//TODO: Do i need to do something here?
 			}
+			else if (("LOAD_ROOM_LIST").equals(cmd)) {
+			    loadRoomList(jsonObj);
+            }
+            
+			
 //			else if (("LOAD_PLAYER_DATA").equals(cmd)) {							// load player data returned from bridge
 //				loadPlayerData(jsonObject);											// load player data
 //			} else if (("LOAD_ROOM_LIST").equals(cmd)) {							// list of rooms returned from bridge

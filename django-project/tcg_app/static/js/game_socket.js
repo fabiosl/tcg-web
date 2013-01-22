@@ -12,6 +12,7 @@ var GameSocket = (function() {
 		_socket.on('reconnect',reconnect_UI);
 		_socket.on('reconnecting', reconnecting_UI);
 		_socket.on('error', error_UI);
+		_socket.on('updateRooms', updateRooms_UI)
 		
     };
 

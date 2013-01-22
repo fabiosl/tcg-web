@@ -29,10 +29,23 @@
     
     /****** UI Jquery Functions *******/
     function updateChatTopBar_UI(nicknames){
- 		$('#nicknames').empty().append($('<span>Online: </span>'));
+ 	    $('#nicknames').empty().append($('<span>Online: </span>'));
         for (var i in nicknames) {
-                $('#nicknames').append($('<b>').text(nicknames[i]));
+            $('#nicknames').append($('<b>').text(nicknames[i]));
         }
+    }
+    
+    function updateRooms_UI(rooms){
+        _clearRooms();
+        
+        for (var i in rooms) {
+            roomJSON = JSON.parse(rooms[i])
+            createNewRoom_UI(roomJSON.hostNickName,roomJSON.roomName,roomJSON.numOfPlayers,roomJSON.roomSid,roomJSON.isPlaying)
+        }
+    }
+    
+    function _clearRooms(){
+        $('.room').remove()
     }
     
     function error_UI(e) {
@@ -45,9 +58,7 @@
     };
     
     function roomCreation_UI(hostNickName,roomName,numOfPlayers,roomSid,isPlaying){
-        alert("a room has been created")
-        createNewRoom_UI(hostNickName,roomName,numOfPlayers,roomSid,isPlaying);
-        
+        createNewRoom_UI(hostNickName,roomName,numOfPlayers,roomSid,isPlaying);        
     };
     
     function reconnect_UI(){
@@ -63,7 +74,7 @@
     function updateOnlineUsersMenu_UI(nicknames){
         $('#player-list').html("")
         for (var i in nicknames) {
-        		$('#player-list').append('<a href="#"><i class="icon-user"></i>'+nicknames[i]+'</a><br />');
+            $('#player-list').append('<a href="#"><i class="icon-user"></i>'+nicknames[i]+'</a><br />');
         }
     };
     
@@ -78,7 +89,7 @@
     
     
     function notifyChat_UI(){
-		$('#chat').addClass('connected');
+	    $('#chat').addClass('connected');
         $('#lines').append($('<p>').append($('<em>').text("You are connected to the chat!")));
     };
     
@@ -88,8 +99,7 @@
     
     
     function createNewRoom_UI(hostNickName,roomName,numOfPlayers,roomSid,isPlaying){
-	 	$('#fancybox-close').trigger('click'); //"clicks" to close fancybox
-        
+        $('#fancybox-close').trigger('click'); //"clicks" to close fancybox
         $room = '<div class="room" style="margin-top:20px;">'+
                 '<h1>'+roomName+'</h1>'+
                 '<label style="float:right;margin-top:11px;">'+hostNickName+'</label>'+
@@ -99,7 +109,7 @@
             	'</div>'
 
         $('#rooms').append($room);
-		$('#roomName').val(''); //clean the field
+        $('#roomName').val(''); //clean the field
     }
     
     function init(){
