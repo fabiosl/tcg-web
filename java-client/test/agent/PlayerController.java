@@ -297,6 +297,7 @@ public class PlayerController {
 			e.printStackTrace();
 		}
     }
+	
 	public static boolean login(String userId, String password) {
 		if(getPlayer(userId) !=  null){ // Check if is already logged in and the user client was added to the map
 			return loginTCG(userId, password);  // if client  was added to the map, simply return loginTCG

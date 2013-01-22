@@ -28,13 +28,7 @@
     }
     
     /****** UI Jquery Functions *******/
-    function updateChatTopBar_UI(nicknames){
- 	    $('#nicknames').empty().append($('<span>Online: </span>'));
-        for (var i in nicknames) {
-            $('#nicknames').append($('<b>').text(nicknames[i]));
-        }
-    }
-    
+ 
     function updateRooms_UI(rooms){
         _clearRooms();
         
@@ -52,8 +46,8 @@
         writeMessageOnChat_UI('System', e ? e : 'A unknown error occurred');
     };
     
-    function updateLoggedUsers_UI (nicknames){
-        updateChatTopBar_UI(nicknames);
+    function updateLoggedUsers_UI(nicknames){
+        console.log('Updating players list.');
         updateOnlineUsersMenu_UI(nicknames);
     };
     
@@ -62,7 +56,6 @@
     };
     
     function reconnect_UI(){
-        clearChatScreen_UI();
         writeMessageOnChat_UI('System', 'Reconnected to the server');
     };
     
@@ -87,16 +80,19 @@
         $('#lines').get(0).scrollTop = 10000000;
     };
     
-    
-    function notifyChat_UI(){
-	    $('#chat').addClass('connected');
-        $('#lines').append($('<p>').append($('<em>').text("You are connected to the chat!")));
-    };
+    function connect_UI(){
+        writeOnStatusBar("You are connected to Socket.IO Server!")
+        writeOnStatusBar("Connecting to Game Server") //Connection "ACK" comes asynchronously
+        
+    }
     
     function clear_UI() {
         $('#message').val('').focus();
     };
     
+    function writeOnStatusBar(string){
+        $("#nicknames").html( "<div id='nicknames'><span>Status: </span><b>"+ string +"</b></div>") 
+    }
     
     function createNewRoom_UI(hostNickName,roomName,numOfPlayers,roomSid,isPlaying){
         $('#fancybox-close').trigger('click'); //"clicks" to close fancybox
@@ -176,7 +172,7 @@
 <div class="centered-resource">
     <form onsubmit="javascript:socket.sendChatMessage($('#message').val());clear_UI();return false;"  id="chat">
         <div id="messages">
-            <div id="nicknames"> <label>Connecting to Game Server </label></div>
+            <div id="nicknames"></div>
             <div id="lines"></div>
         </div>
         <div id="send-message">

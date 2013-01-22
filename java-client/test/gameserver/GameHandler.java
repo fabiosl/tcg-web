@@ -92,16 +92,14 @@ public class GameHandler extends IOHandlerAbs {
 			JSONArray argsArray = jsonObject.getJSONArray("args");
 			String userId = argsArray.getString(0);
 			String password = argsArray.getString(1);
-			handleAckNoticName(client, oriMessage, false);
-			//this.playerController.getOrCreatePlayerClient(userId);
 			GenericIO genericIO = (GenericIO) client;
 			genericIO.attr.put("userId", userId); 
 			boolean logged = PlayersController.login(userId, password); 
-			PlayersController.broadcastLoggedPlayers();
-			PlayersController.addIOClient(PlayersController.getPlayer(userId), client);
 			handleAckNoticName(client, oriMessage, logged);
-			
-			//emit("announcement", userId + " connected");
+			if(logged){
+    			PlayersController.broadcastLoggedPlayers();
+    			PlayersController.addIOClient(PlayersController.getPlayer(userId), client);
+			}
 			
 		}
 		else if (eventName.equals("createRoom")){
