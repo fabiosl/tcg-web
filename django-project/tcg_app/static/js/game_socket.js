@@ -8,6 +8,8 @@ var GameSocket = (function() {
 		_socket.on('connect', connect_UI);
 		_socket.on('updateLoggedUsers', updateLoggedUsers_UI);
 		_socket.on('addLoggedUser', addLoggedUser_UI);
+		_socket.on('removeLoggedUser', removeLoggedUser_UI);
+		
 		_socket.on('roomCreation', roomCreation_UI)
 		_socket.on('chatMessage', writeMessageOnChat_UI);
 		_socket.on('reconnect',reconnect_UI);

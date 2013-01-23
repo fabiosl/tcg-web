@@ -64,8 +64,8 @@ public class GameHandler extends IOHandlerAbs {
 		
 		//PlayersController.getPlayerClient(userId).logout(true);
 		//PlayersController.removePlayer(userId);
-		// disconnect client from PlayersMap
-		PlayersController.broadcastLoggedPlayers();
+		//disconnect client from PlayersMap
+		//PlayersController.broadcastLoggedPlayers();
 	}
 
 	
@@ -95,7 +95,7 @@ public class GameHandler extends IOHandlerAbs {
 			boolean logged = PlayersController.login(userId, password); 
 			handleAckNoticName(client, oriMessage, logged);
 			if(logged){
-    			PlayersController.broadcastLoggedPlayers();
+//    			PlayersController.broadcastLoggedPlayers();
     			PlayersController.getPlayer(userId).addSocketIOClient(client);
 			}
 			

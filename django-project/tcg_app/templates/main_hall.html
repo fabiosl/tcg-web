@@ -21,6 +21,8 @@
 
 <script>
     var USER_NICKNAME = '{{user_nickname|capfirst}}'
+    var user_list = []
+    var room_list = []
 
     function createNewRoom(roomName){
         socket.sendCreateRoomSignal(roomName);
@@ -28,7 +30,6 @@
     }
     
     /****** UI Jquery Functions *******/
- 
     function updateRooms_UI(rooms){
         _clearRooms();
         
@@ -42,31 +43,53 @@
         $('.room').remove()
     }
     
+    
+    /*******Login Related Functions********/
+    function addLoggedUser_UI(nickname){
+        console.log('Adding User.')
+        user_list.push(nickname)
+        _refreshUserList()
+    };
+    
+    function removeLoggedUser_UI(nickname){
+        console.log('Removing User.')
+        index = user_list.indexOf(nickname)
+        user_list.splice(index,1)
+        _refreshUserList()
+    };
+   
+    function updateLoggedUsers_UI(nicknames){
+        console.log('Updating players list.')
+        for (var i in nicknames) {
+            user_list.push(nicknames[i]);
+        }
+        _refreshUserList()
+        
+    };
+    
+    function _refreshUserList(){
+        $('#player-list').html("")
+        for (var i in user_list) {
+            $('#player-list').append('<a href="#"><i class="icon-user"></i>'+user_list[i]+'</a><br />');
+        }
+    }
+    /*******End********/
+    
+    
+    
     function error_UI(e) {
         writeOnStatusBar("Problems with Socket.IO Server. Is the Java Client running?")
     };
     
-    function updateLoggedUsers_UI(nicknames){
-        console.log('Updating players list.');
-        updateOnlineUsersMenu_UI(nicknames);
-    };
     
-     function addLoggedUser_UI(nickname){
-        console.log('Adding User.')
-        _addUserToList(nickname)
-    };
     
-     function _addUserToList(nickname){
-        $('#player-list').append('<a href="#"><i class="icon-user"></i>'+nickname+'</a><br />');
-     }
+   
     
-     function updateOnlineUsersMenu_UI(nicknames){
-        $('#player-list').html("")
-        for (var i in nicknames) {
-            _addUserToList(nicknames[i]);
-            
-        }
-    };
+   
+    
+  
+    
+    
     
     
     function roomCreation_UI(hostNickName,roomName,numOfPlayers,roomSid,isPlaying){

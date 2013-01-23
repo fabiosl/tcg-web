@@ -8,18 +8,14 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import agent.processor.AgentProcessor;
 import agent.util.Util;
 
 import com.sun.sgs.client.ClientChannel;
@@ -35,19 +31,13 @@ import com.yongboy.socketio.server.transport.IOClient;
  */
 public class PlayersController {
 
-    // private static Map<Player, SimpleClient> simpleClientMap = new
-    // HashMap<Player, SimpleClient>(); //Darkstar Mapping
-    // private static Map<Player, List<IOClient>> IOClientMap = new
-    // HashMap<Player, List<IOClient>>(); //Socket.IO Mapping
-    // private static Map<String, ClientChannel> channelMap = new
-    // HashMap<String, ClientChannel>();
+
     private static Map<String, Room> lobbyRooms = new HashMap<String, Room>();
     private static Map<String, ClientChannel> channelMap = new HashMap<String, ClientChannel>();
     private static Map<String, Player> clientMap = new HashMap<String, Player>();
-    private List<Room> availableRooms = new ArrayList<Room>();
-    private AgentProcessor agentProcessor = AgentProcessor.getInstance();
+//    private List<Room> availableRooms = new ArrayList<Room>();
+//    private AgentProcessor agentProcessor = AgentProcessor.getInstance();
 
-    
     public static Map<String, ClientChannel> getChannelMap() {
         return channelMap;
     }
@@ -61,8 +51,7 @@ public class PlayersController {
         for (String key : lobbyRooms.keySet()) {
             Room r = lobbyRooms.get(key);
             if (room.equals(r)) { // This room already exists
-                System.err
-                        .println("Are you trying to add a room that already exists?");
+                System.err.println("Are you trying to add a room that already exists?");
                 return;
             }
         }
@@ -86,30 +75,17 @@ public class PlayersController {
         System.err.println("Could not remove the room " + room.getFriendlyId());
     }
 
-    
-    public static void broadcastToPlayerIOClients(Player player, String message) {
-        if (player.getSocketIOClients() != null
-                && !player.getSocketIOClients().isEmpty()) {
-            for (IOClient ioClient : player.getSocketIOClients()) {
-                GameHandler.getInstance().broadcast(ioClient, message);
-                System.out.println("Sent to client: " + message);
-
-            }
-        } else {
-            System.err.println("The player " + player.getUserId()
-                    + " don't have any socket.io clients connected right now");
-        }
-    }
 
     public Set<String> getLoggedPlayersNames() {
         Set<String> names = new TreeSet<String>();
-        for (String playerId : this.clientMap.keySet()) {
+        for (String playerId : clientMap.keySet()) {
             names.add(clientMap.get(playerId).getUserName());
         }
         return names;
     }
 
-    public static synchronized void createPlayerClient(String userId, String password, boolean isFlashPlayer) {
+    public static synchronized void createPlayerClient(String userId,
+            String password, boolean isFlashPlayer) {
         if (!clientMap.containsKey(userId)) {
             SimpleClient client = null;
             if (!isFlashPlayer) {
@@ -125,7 +101,7 @@ public class PlayersController {
 
     public static Player getPlayer(String userId) {
         if (clientMap.get(userId) == null) {
-            System.err.println("You are trying to get a player that does not exist: " + userId);
+            System.err.println("You are trying to get a player that does not exist: "+ userId);
         }
         return clientMap.get(userId);
     }
@@ -187,36 +163,6 @@ public class PlayersController {
         return playerClient != null && playerClient.isConnected();
     }
 
-    private void processLogin(JSONObject inputJson)
-            throws TCGAuthenticationException, DarkstarAuthenticationException {
-        try {
-            String userId = Util.getStringFromJson(inputJson, "username");
-            String password = Util.getStringFromJson(inputJson, "password");
-            JSONObject jsonObject = new JSONObject();
-            if (loginTCG(userId, password)) {
-                if (loginDarkstar(userId, password)) {
-                    System.out.println("User " + userId
-                            + " logged Successfully");
-                    getPlayerInitData(userId);
-                    loadLoginSequence(userId);
-                } else {
-                    jsonObject.put("cmd", "LOGIN_FAILURE_DS");
-                    jsonObject.put("username", userId);
-                    System.err.println("Login to Darkstar failed");
-                    throw new DarkstarAuthenticationException();
-                }
-            } else {
-                jsonObject.put("cmd", "LOGIN_FAILURE_TCG");
-                jsonObject.put("username", userId);
-                // darkstarBridge.sendToAgent(jsonObject.toString());// TODO
-                System.err.println("Login to TCG failed");
-                throw new TCGAuthenticationException();
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-    }
 
     private static void loadLoginSequence(String userId) {
         URLConnection urlConnection;
@@ -225,9 +171,7 @@ public class PlayersController {
         BufferedReader in;
         try {
             if (PlayersController.getPlayerClient(userId).isConnected()) {
-                URL url = new URL(
-                        "http://tcg.dyndns.info:8081/mcslcard/data/saveLogin.jsp?userId="
-                                + userId);
+                URL url = new URL("http://tcg.dyndns.info:8081/mcslcard/data/saveLogin.jsp?userId="+ userId);
                 urlConnection = url.openConnection();
                 in = new BufferedReader(new InputStreamReader(
                         (InputStream) urlConnection.getContent()));
@@ -242,9 +186,7 @@ public class PlayersController {
                     jsonObj.put("cmd", "SET_LOGIN_SEQ");
                     jsonObj.put("parameters", jsonObjNest);
                     jsonObj.put("scene", "ALL_SCENE");
-                    sendSessionMsgToDarkstar(
-                            PlayersController.getPlayerClient(userId),
-                            jsonObj.toString());
+                    sendSessionMsgToDarkstar(PlayersController.getPlayerClient(userId),jsonObj.toString());
                 }
             }
         } catch (Exception e) {
@@ -255,7 +197,8 @@ public class PlayersController {
     public static void sendSessionMsgToDarkstar(SimpleClient playerClient,
             String text) {
         try {
-            System.out.println("Sent sess msg to DS server: " + text);
+            if(!text.equals("ping"))
+                System.out.println("Sent sess msg to DS server: " + text);
             ByteBuffer message = Util.encodeString(text);
             playerClient.send(message);
         } catch (Exception e) {
@@ -278,10 +221,7 @@ public class PlayersController {
                 jsonObj.put("cmd", "INIT_PLAYER_DATA");
                 jsonObj.put("parameters", jsonObjNest);
                 jsonObj.put("scene", "ALL_SCENE");
-                sendSessionMsgToDarkstar(
-                        PlayersController.getPlayerClient(userId),
-                        jsonObj.toString());
-                // darkstarBridge.sendToAgent(jsonObj.toString());
+                sendSessionMsgToDarkstar(PlayersController.getPlayerClient(userId),jsonObj.toString());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -290,7 +230,7 @@ public class PlayersController {
 
     public static boolean login(String userId, String password) {
         if (clientMap.keySet().contains(userId)) { // Check if is already logged in and the user client was added to the map. If client was added to the map, simply return loginTCG.
-            return loginTCG(userId, password); 
+            return loginTCG(userId, password);
         } else {
             boolean logged = loginDarkstar(userId, password);
             System.out.println("User " + userId + " is logged? " + logged);
@@ -306,23 +246,17 @@ public class PlayersController {
     public static void removePlayer(String userId) {
         System.out.println("I will remove " + userId + " from the players map.");
         Player player = clientMap.get(userId);
-        // TODO: This verification should be unnecessary. Only HTML clients
-        // should be stored on the map.
+        // TODO: This verification should be unnecessary. Only HTML clients should be stored
         if (player != null && !player.isFlashClient() && player.getDarkstarClient().isConnected()) {
-            player.getDarkstarClient().logout(false);
-            if (player.getDarkstarClient().isConnected()){
-                System.err.println("Performed logout on Darkstar Client, but the client is still connected. Forcing logout...");
-                player.getDarkstarClient().logout(true);
-            }
-            
+            player.getDarkstarClient().logout(false); //Do NOT try to logout forcing it. The code that is written after logout(true) will never be executed. API Bug.
             player.setDarkstarClient(null);
-
             for (IOClient socketIOClient : player.getSocketIOClients()) {
                 socketIOClient.disconnect();
             }
         }
 
         clientMap.remove(userId);
+        System.err.println("I have removed " + userId + " from the players map.");
         System.gc();
     }
 
@@ -367,17 +301,24 @@ public class PlayersController {
 
     public static void debug() {
         System.out.println("----------------------------------------------------------------------------------------------------------------");
-        
+
         for (String userId : clientMap.keySet()) {
-            System.out.println("--");
             Player player = clientMap.get(userId);
-            System.out.println("Player: " + userId + (player.isFlashClient() ? " - Flash Client" : " - HTML Client"));
-            System.out.println("Socket.IO clients: " + player.getSocketIOClients().size());
-            System.out.println("Darkstar client: " + player.getDarkstarClient() + (player.getDarkstarClient()!=null ? ""+player.getDarkstarClient().isConnected():""));
-            System.out.println("--");
+            System.out.println("    Player: "+ userId+ (player.isFlashClient() ? " - Flash Client": " - HTML Client"));
+            System.out.println("    Socket.IO clients: " + player.getSocketIOClients().size());
+            System.out.println("    Darkstar client: " + player.getDarkstarClient() + (player.getDarkstarClient() != null ? "" + player.getDarkstarClient().isConnected() : ""));
         }
-        
+
         System.out.println("----------------------------------------------------------------------------------------------------------------");
+    }
+
+    public static void pingDarkstarClients() {
+        for (String userId : clientMap.keySet()) {
+            Player p = clientMap.get(userId);
+            if(p.getDarkstarClient().isConnected()){
+                sendSessionMsgToDarkstar(p.getDarkstarClient(), "ping" );
+            }
+        }
     }
 
 }

@@ -1,5 +1,7 @@
 package agent;
 
+import gameserver.GameHandler;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -58,6 +60,21 @@ public class Player {
         this.socketIOClients = socketIOClients;
     }
 
+
+    public void broadcastToSocketIOClients(String message) {
+        if (getSocketIOClients() != null && !getSocketIOClients().isEmpty()) {
+            for (IOClient ioClient : getSocketIOClients()) {
+                GameHandler.getInstance().broadcast(ioClient, message);
+                System.out.println("Sent to client: " + message);
+
+            }
+        } else {
+            System.err.println("The player " + getUserId() + " don't have any socket.io clients connected right now");
+        }
+    }
+    
+    
+
     public SimpleClient getDarkstarClient() {
         if(this.darkstarClient == null){
             System.err.println("The Darkstar Client of this player is null. Be ready for a NullPointerException.");
@@ -69,32 +86,6 @@ public class Player {
         this.darkstarClient = darkstarClient;
     }
 
-	
-	
-	
-	/** constructor */
-	/**
-	 * Creates the player object to manage players in the TCG
-	 * 
-	 * @param userName		user name of player
-	 * @param matches		number of matches played
-	 * @param wins			number of matches won
-	 * @param losses		number of matches lost
-	 * @param interrupt		number of matches interrupted
-	 * @param score			score of player
-	 */
-	public Player(String userId, String userName, int matches, int wins, 
-		int losses, int interrupt, int score, int rank, boolean agent) {
-		this.userId = userId;										// set user id
-		this.userName = userName;									// set user name
-		this.matches = matches;										// set number of matches
-		this.wins = wins;											// set number of wins
-		this.losses = losses;										// set number of losses
-		this.interrupt = interrupt;									// set number of interrupts
-		this.score = score;											// set score
-		this.rank = rank;											// set rank
-	}
-	
 	/**
 	 * Creates player object for human players
 	 * 

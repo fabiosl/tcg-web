@@ -125,6 +125,7 @@ abstract class EventClientIO implements IOClient {
 			}
 			
 			log.info("now remove the clients from store with sessionid " + sessionId);
+
 			PlayersController.removeSocketIOClient(sessionId);
 			
 			if (handler != null) {

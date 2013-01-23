@@ -76,7 +76,8 @@ public class DarkstarChannelListener implements ClientChannelListener {
 			if(cmd.equals("CHAT")){
 				String args = formatArgs(parameters.getString("talker"),parameters.getString("msg"));
 				String content = String.format("{\"name\":\"%s\",\"args\":[%s]}","chatMessage", args);
-				PlayersController.broadcastToPlayerIOClients(PlayersController.getPlayer(this.userId), content);
+				PlayersController.getPlayer(this.userId).broadcastToSocketIOClients(content);
+				
 			}
 			
 			else if(cmd.equals("ADD_PLAYER_TO_LIST")){
@@ -85,19 +86,19 @@ public class DarkstarChannelListener implements ClientChannelListener {
 				GameHandler.getInstance().emit("addLoggedUser", set);
 			}
 			else if (cmd.equals("REMOVE_PLAYER_FROM_LIST")){
-				PlayersController.removePlayer(parameters.getString("userId"));
-				PlayersController.broadcastLoggedPlayers();
+
+			    Set<String> set = new TreeSet<String>();
+                set.add(parameters.getString("nickName"));
+                GameHandler.getInstance().emit("removeLoggedUser", set);
 			}
 			
 			else if (cmd.equals("ADD_ROOM_TO_BATTLE_LIST")){
-				//TODO: Add room to battle list and notify the socketIO's users
-				// {"cmd":"ADD_ROOM_TO_BATTLE_LIST","scene":"LOBBY","parameters":{"needPwd":false,"hostNickName":"Fabio Leal","roomName":"batalha","numOfPlayers":1,"roomSid":313,"isPlaying":false}}
 				Room newRoom = new Room(parameters.getInt("roomSid"), parameters.getString("roomName"),"",parameters.getString("hostNickName"),1);
 				PlayersController.addRoom(newRoom);
 				
 				String args = formatArgs(parameters.getString("hostNickName"),parameters.getString("roomName"), ""+parameters.getInt("numOfPlayers"), ""+parameters.getInt("roomSid"), ""+parameters.getBoolean("isPlaying"));
 				String content = String.format("{\"name\":\"%s\",\"args\":[%s]}","roomCreation", args);
-				PlayersController.broadcastToPlayerIOClients(PlayersController.getPlayer(this.userId), content);
+				PlayersController.getPlayer(this.userId).broadcastToSocketIOClients(content);
 			}
 			
 		
