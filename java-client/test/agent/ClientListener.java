@@ -64,7 +64,7 @@ public class ClientListener implements SimpleClientListener {
 
 	@Override
 	public void loggedIn() {
-		System.out.println("WOHOOO, I've logged in!");
+		System.out.println("User " + userId + " logged successfully on DarkStar Server.");
 
 	}
 

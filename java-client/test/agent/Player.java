@@ -7,8 +7,13 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONObject;
+
+import com.sun.sgs.client.simple.SimpleClient;
+import com.yongboy.socketio.server.transport.IOClient;
 
 /** class */
 /**
@@ -38,7 +43,33 @@ public class Player {
 	/** int to store rank of player */
 	private int rank;
 	private String password;
+	
 	private boolean isFlashClient;
+	
+	private List<IOClient> socketIOClients = new ArrayList<IOClient>();
+    private SimpleClient darkstarClient;
+    
+    
+	public List<IOClient> getSocketIOClients() {
+        return socketIOClients;
+    }
+
+    public void setSocketIOClients(List<IOClient> socketIOClients) {
+        this.socketIOClients = socketIOClients;
+    }
+
+    public SimpleClient getDarkstarClient() {
+        if(this.darkstarClient == null){
+            System.err.println("The Darkstar Client of this player is null. Be ready for a NullPointerException.");
+        }
+        return darkstarClient;
+    }
+
+    public void setDarkstarClient(SimpleClient darkstarClient) {
+        this.darkstarClient = darkstarClient;
+    }
+
+	
 	
 	
 	/** constructor */
@@ -177,4 +208,12 @@ public class Player {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+    public void addSocketIOClient(IOClient client) {
+        if (socketIOClients == null){
+            socketIOClients = new ArrayList<IOClient>();
+        }
+        socketIOClients.add(client);
+        
+    }
 }

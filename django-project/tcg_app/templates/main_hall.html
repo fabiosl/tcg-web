@@ -43,13 +43,31 @@
     }
     
     function error_UI(e) {
-        writeMessageOnChat_UI('System', e ? e : 'A unknown error occurred');
+        writeOnStatusBar("Problems with Socket.IO Server. Is the Java Client running?")
     };
     
     function updateLoggedUsers_UI(nicknames){
         console.log('Updating players list.');
         updateOnlineUsersMenu_UI(nicknames);
     };
+    
+     function addLoggedUser_UI(nickname){
+        console.log('Adding User.')
+        _addUserToList(nickname)
+    };
+    
+     function _addUserToList(nickname){
+        $('#player-list').append('<a href="#"><i class="icon-user"></i>'+nickname+'</a><br />');
+     }
+    
+     function updateOnlineUsersMenu_UI(nicknames){
+        $('#player-list').html("")
+        for (var i in nicknames) {
+            _addUserToList(nicknames[i]);
+            
+        }
+    };
+    
     
     function roomCreation_UI(hostNickName,roomName,numOfPlayers,roomSid,isPlaying){
         createNewRoom_UI(hostNickName,roomName,numOfPlayers,roomSid,isPlaying);        
@@ -64,12 +82,7 @@
     };
     
     
-    function updateOnlineUsersMenu_UI(nicknames){
-        $('#player-list').html("")
-        for (var i in nicknames) {
-            $('#player-list').append('<a href="#"><i class="icon-user"></i>'+nicknames[i]+'</a><br />');
-        }
-    };
+   
     
     function clearChatScreen_UI(){
     	$('#lines').remove();

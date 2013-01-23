@@ -3,6 +3,8 @@ import gameserver.GameHandler;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.json.JSONException;
@@ -78,10 +80,9 @@ public class DarkstarChannelListener implements ClientChannelListener {
 			}
 			
 			else if(cmd.equals("ADD_PLAYER_TO_LIST")){
-				if(PlayersController.getPlayer(parameters.getString("userId"))== null){
-					PlayersController.createPlayerClient(parameters.getString("userId"), "", true);
-				}
-				PlayersController.broadcastLoggedPlayers();
+				Set<String> set = new TreeSet<String>();
+				set.add(parameters.getString("nickName"));
+				GameHandler.getInstance().emit("addLoggedUser", set);
 			}
 			else if (cmd.equals("REMOVE_PLAYER_FROM_LIST")){
 				PlayersController.removePlayer(parameters.getString("userId"));

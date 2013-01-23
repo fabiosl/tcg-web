@@ -27,20 +27,19 @@ import com.yongboy.socketio.server.transport.GenericIO;
 import com.yongboy.socketio.server.transport.IOClient;
 
 public class GameHandler extends IOHandlerAbs {
-	private static GameHandler instance; 
-	
-	private GameHandler(){
-	}
+    private static GameHandler instance; 
 
-	
-	
-	public static GameHandler getInstance(){
-		if (instance == null)
-			instance = new GameHandler();
-		
-		return instance;
-	}
-	
+    private GameHandler(){
+    }
+
+
+
+    public static GameHandler getInstance(){
+        if (instance == null)
+            instance = new GameHandler();
+
+        return instance;
+    }
 		
 	@Override
 	public void OnConnect(IOClient client) {
@@ -53,19 +52,18 @@ public class GameHandler extends IOHandlerAbs {
 	@Override
 	public void OnDisconnect(IOClient client) {
 		System.out.println("A user disconnected. ");
-
+		
 		GenericIO genericIO = (GenericIO) client;
 		Object userIdObj = genericIO.attr.get("userId");
 
 		if (userIdObj == null)
 			return;
-
 		String userId = userIdObj.toString();
+		PlayersController.removeSocketIOClient(client.getSessionID());
 		
-		PlayersController.getPlayerClient(userId).logout(true);
 		
-		PlayersController.getPlayersMap().remove(userId);
-		
+		//PlayersController.getPlayerClient(userId).logout(true);
+		//PlayersController.removePlayer(userId);
 		// disconnect client from PlayersMap
 		PlayersController.broadcastLoggedPlayers();
 	}
@@ -98,7 +96,7 @@ public class GameHandler extends IOHandlerAbs {
 			handleAckNoticName(client, oriMessage, logged);
 			if(logged){
     			PlayersController.broadcastLoggedPlayers();
-    			PlayersController.addIOClient(PlayersController.getPlayer(userId), client);
+    			PlayersController.getPlayer(userId).addSocketIOClient(client);
 			}
 			
 		}
@@ -154,11 +152,11 @@ public class GameHandler extends IOHandlerAbs {
 		System.out.println("shutdown now ~~~");
 	}
 
-	public static void emit(String eventName, Set<String> usersNames) {
+	public void emit(String eventName, Set<String> usersNames) {
 		String content = String.format("{\"name\":\"%s\",\"args\":[%s]}",
 				eventName, JSON.toJSONString(usersNames));
 		System.out.println("Broadcasting: " + content);
-		getInstance().broadcast(content);
+		broadcast(content);
 	}
 
 //	public static void emit(String eventName, String... array) {
@@ -182,7 +180,5 @@ public class GameHandler extends IOHandlerAbs {
 //		System.out.println("Broadcasting: " + client + " "  + content);
 //		super.broadcast(client, content);
 //	}
-	
-	
-	
+
 }

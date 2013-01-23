@@ -6,8 +6,7 @@ import com.yongboy.socketio.MainServer;
 
 class CheckLoggedUsersThread extends Thread {
     public void run() {
-    	PlayersController.debugIOClientMap();
-    	PlayersController.debugSimpleClientMap();
+    	PlayersController.debug();
     	try {
 			Thread.sleep(5000);
 			run();

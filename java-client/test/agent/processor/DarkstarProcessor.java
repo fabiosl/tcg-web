@@ -119,7 +119,7 @@ public class DarkstarProcessor {
     	        JSONObject roomJson = roomsJsonArray.getJSONObject(i);
     	        result.add(roomJson.toString());
     	    }   
-    	    GameHandler.emit("updateRooms", result);
+    	    GameHandler.getInstance().emit("updateRooms", result);
     	} catch (JSONException e) {
  	        e.printStackTrace();
     	}
@@ -162,13 +162,15 @@ public class DarkstarProcessor {
 			} else if (("LOAD_PLAYER_LIST").equals(cmd)) {						
 				JSONObject parameters = jsonObj.getJSONObject("parameters");
 				JSONArray playersJsonArray = parameters.getJSONArray("playerList");
+				Set<String> players = new TreeSet<String>();
 				for (int i = 0; i < playersJsonArray.length(); i++) {
 				    JSONObject playerJson = playersJsonArray.getJSONObject(i);
 				    String playerName = playerJson .getString("nickName");
-				    String playerId = playerJson .getString("userId");
-				    PlayersController.createPlayerClient(playerId, "", true);
+				    players.add(playerName);
 				}
-				PlayersController.broadcastLoggedPlayers();
+				GameHandler.getInstance().emit("updateLoggedUsers", players);
+//				PlayersController.broadcastLoggedPlayers();
+				
 			}
 			else if (("CREATE_ROOM").equals(cmd)) {
 				//TODO: Do i need to do something here?
