@@ -32,7 +32,7 @@ import com.yongboy.socketio.server.transport.IOClient;
 public class PlayersController {
 
 
-    private static Map<String, Room> lobbyRooms = new HashMap<String, Room>();
+    
     private static Map<String, ClientChannel> channelMap = new HashMap<String, ClientChannel>();
     private static Map<String, Player> clientMap = new HashMap<String, Player>();
 //    private List<Room> availableRooms = new ArrayList<Room>();
@@ -41,40 +41,6 @@ public class PlayersController {
     public static Map<String, ClientChannel> getChannelMap() {
         return channelMap;
     }
-
-    public synchronized static void addRoom(Room room) {
-        if (room == null) {
-            System.err.println("Trying to add a null room");
-            return;
-        }
-
-        for (String key : lobbyRooms.keySet()) {
-            Room r = lobbyRooms.get(key);
-            if (room.equals(r)) { // This room already exists
-                System.err.println("Are you trying to add a room that already exists?");
-                return;
-            }
-        }
-        lobbyRooms.put(room.getFriendlyId(), room);
-    }
-
-    public synchronized static void removeRoom(Room room) {
-        if (room == null) {
-            System.err.println("Trying to remove a null room");
-            return;
-        }
-
-        for (String key : lobbyRooms.keySet()) {
-            Room r = lobbyRooms.get(key);
-            if (room.equals(r)) { // This room already exists
-                lobbyRooms.remove(room);
-                return;
-            }
-        }
-
-        System.err.println("Could not remove the room " + room.getFriendlyId());
-    }
-
 
     public Set<String> getLoggedPlayersNames() {
         Set<String> names = new TreeSet<String>();

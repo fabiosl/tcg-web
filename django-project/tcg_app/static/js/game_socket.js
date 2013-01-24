@@ -6,16 +6,25 @@ var GameSocket = (function() {
     function GameSocket(host){
     	_socket = io.connect(host)
 		_socket.on('connect', connect_UI);
-		_socket.on('updateLoggedUsers', updateLoggedUsers_UI);
+
+    	
+    	_socket.on('updateLoggedUsers', updateLoggedUsers_UI);
 		_socket.on('addLoggedUser', addLoggedUser_UI);
 		_socket.on('removeLoggedUser', removeLoggedUser_UI);
 		
-		_socket.on('roomCreation', roomCreation_UI)
+		
+		_socket.on('updateRooms', updateRooms_UI)
+		_socket.on('addRoom', addRoom_UI)
+		_socket.on('removeRoom', removeRoom_UI)
+		
+		
 		_socket.on('chatMessage', writeMessageOnChat_UI);
+		
+		
 		_socket.on('reconnect',reconnect_UI);
 		_socket.on('reconnecting', reconnecting_UI);
 		_socket.on('error', error_UI);
-		_socket.on('updateRooms', updateRooms_UI)
+		
 		
     };
 

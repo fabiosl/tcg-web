@@ -93,20 +93,29 @@ public class DarkstarChannelListener implements ClientChannelListener {
 			}
 			
 			else if (cmd.equals("ADD_ROOM_TO_BATTLE_LIST")){
-				Room newRoom = new Room(parameters.getInt("roomSid"), parameters.getString("roomName"),"",parameters.getString("hostNickName"),1);
-				PlayersController.addRoom(newRoom);
-				
-				String args = formatArgs(parameters.getString("hostNickName"),parameters.getString("roomName"), ""+parameters.getInt("numOfPlayers"), ""+parameters.getInt("roomSid"), ""+parameters.getBoolean("isPlaying"));
-				String content = String.format("{\"name\":\"%s\",\"args\":[%s]}","roomCreation", args);
-				PlayersController.getPlayer(this.userId).broadcastToSocketIOClients(content);
-			}
+                Room newRoom = new Room(parameters.getInt("roomSid"), parameters.getString("roomName"),"",parameters.getString("hostNickName"),1);
+                String args = formatArgs(""+parameters.getBoolean("needPwd"),parameters.getString("hostNickName"),parameters.getString("roomName"), ""+parameters.getInt("numOfPlayers"), ""+parameters.getInt("roomSid"), ""+parameters.getBoolean("isPlaying"));
+                String content = String.format("{\"name\":\"%s\",\"args\":[%s]}","addRoom", args);
+                PlayersController.getPlayer(this.userId).broadcastToSocketIOClients(content);
+            }
+			
+			else if (cmd.equals("REMOVE_ROOM_FROM_BATTLE_LIST")){
+                String content = formatContent("removeRoom", ""+parameters.getInt("roomSid"));
+                PlayersController.getPlayer(this.userId).broadcastToSocketIOClients(content);
+            }
 			
 		
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
+	
+	private String formatContent(String command, String... args){
+	    String argsString = formatArgs(args);
+        return String.format("{\"name\":\"%s\",\"args\":[%s]}",command, argsString);
 
+	}
+	
 	private String formatArgs(String... args){
 		StringBuffer sb = new StringBuffer();
 		String sep = "";

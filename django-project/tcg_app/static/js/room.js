@@ -1,21 +1,20 @@
 var Room = (function() {
     // "private" variables 
-	var _needPwd;
-	var _hostNickName;
-	var _roomName;
-    var _numOfPlayers;
-    var _roomSid;
-    var _isPlaying;
+	var needPwd;
+	var hostNickName;
+	var roomName;
+    var numOfPlayers;
+    var roomSid;
+    var isPlaying;
     
     // constructor
-    function Room(_needPwd,_hostNickName,_roomName,_numOfPlayers,_roomSid,_isPlaying){
-    	_needPwd = needPwd;
-    	_hostNickName = hostNickName ;
-    	_roomName = roomName;
-        _numOfPlayers = numOfPlayers;
-        _roomSid = roomSid;
-        _isPlaying = isPlaying;
-		
+    function Room(needPwd,hostNickName,roomName,numOfPlayers,roomSid,isPlaying){
+    	this.needPwd = needPwd
+    	this.hostNickName = hostNickName
+    	this.roomName = roomName
+    	this.numOfPlayers = numOfPlayers
+    	this.roomSid = roomSid
+    	this.isPlaying = isPlaying
     };
 
     return Room;
