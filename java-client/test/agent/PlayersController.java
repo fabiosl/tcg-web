@@ -243,10 +243,6 @@ public class PlayersController {
         }
     }
 
-    public static void broadcastLoggedPlayers() {
-        GameHandler.getInstance().emit("updateLoggedUsers",
-                new TreeSet<String>(clientMap.keySet()));
-    }
 
     public static void createRoom(String userId, String roomName,
             String roomPassword) {
@@ -266,16 +262,15 @@ public class PlayersController {
     }
 
     public static void debug() {
-        System.out.println("----------------------------------------------------------------------------------------------------------------");
-
-        for (String userId : clientMap.keySet()) {
-            Player player = clientMap.get(userId);
-            System.out.println("    Player: "+ userId+ (player.isFlashClient() ? " - Flash Client": " - HTML Client"));
-            System.out.println("    Socket.IO clients: " + player.getSocketIOClients().size());
-            System.out.println("    Darkstar client: " + player.getDarkstarClient() + (player.getDarkstarClient() != null ? "" + player.getDarkstarClient().isConnected() : ""));
-        }
-
-        System.out.println("----------------------------------------------------------------------------------------------------------------");
+//        System.err.println("Debug:");
+//        for (String userId : clientMap.keySet()) {
+//            StringBuffer sb = new StringBuffer();
+//            Player player = clientMap.get(userId);
+//            sb.append("    Player: "+ userId+ (player.isFlashClient() ? " - Flash Client": " - HTML Client"));
+//            sb.append("- Socket.IO clients: " + player.getSocketIOClients().size());
+//            sb.append("- Darkstar client: " + player.getDarkstarClient() + (player.getDarkstarClient() != null ? "" + player.getDarkstarClient().isConnected() : ""));
+//            System.out.println(sb.toString());
+//        }
     }
 
     public static void pingDarkstarClients() {

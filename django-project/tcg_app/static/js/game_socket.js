@@ -8,18 +8,17 @@ var GameSocket = (function() {
 		_socket.on('connect', connect_UI);
 
     	
-    	_socket.on('updateLoggedUsers', updateLoggedUsers_UI);
-		_socket.on('addLoggedUser', addLoggedUser_UI);
-		_socket.on('removeLoggedUser', removeLoggedUser_UI);
+    	_socket.on('LOAD_PLAYER_LIST', loadPlayerList);
+		_socket.on('ADD_PLAYER_TO_LIST', addPlayerToList);
+		_socket.on('REMOVE_PLAYER_FROM_LIST', removePlayerFromList);
 		
 		
-		_socket.on('updateRooms', updateRooms_UI)
-		_socket.on('addRoom', addRoom_UI)
-		_socket.on('removeRoom', removeRoom_UI)
+		_socket.on('LOAD_ROOM_LIST', updateRooms_UI)
+		_socket.on('ADD_ROOM_TO_BATTLE_LIST', addRoom_UI)
+		_socket.on('REMOVE_ROOM_FROM_BATTLE_LIST', removeRoom_UI)
 		
 		
-		_socket.on('chatMessage', writeMessageOnChat_UI);
-		
+		_socket.on('CHAT', writeMessageOnChat_UI);
 		
 		_socket.on('reconnect',reconnect_UI);
 		_socket.on('reconnecting', reconnecting_UI);

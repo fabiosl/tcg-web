@@ -72,36 +72,18 @@ public class DarkstarChannelListener implements ClientChannelListener {
 			String cmd = jsonObj.getString("cmd");
 			String scene = jsonObj.getString("scene");
 			JSONObject parameters = jsonObj.getJSONObject("parameters");
+			Set<String> handledMessages = new TreeSet<String>(); 
+			handledMessages.add("ADD_PLAYER_TO_LIST");
+			handledMessages.add("REMOVE_PLAYER_FROM_LIST");
+			handledMessages.add("ADD_ROOM_TO_BATTLE_LIST");
+			handledMessages.add("REMOVE_ROOM_FROM_BATTLE_LIST");
+			handledMessages.add("CHAT");
 			
-			if(cmd.equals("CHAT")){
-				String args = formatArgs(parameters.getString("talker"),parameters.getString("msg"));
-				String content = String.format("{\"name\":\"%s\",\"args\":[%s]}","chatMessage", args);
-				PlayersController.getPlayer(this.userId).broadcastToSocketIOClients(content);
-				
+			if (handledMessages.contains(cmd)){
+			    sendToClient(cmd, decodedMessage);
 			}
-			
-			else if(cmd.equals("ADD_PLAYER_TO_LIST")){
-				Set<String> set = new TreeSet<String>();
-				set.add(parameters.getString("nickName"));
-				GameHandler.getInstance().emit("addLoggedUser", set);
-			}
-			else if (cmd.equals("REMOVE_PLAYER_FROM_LIST")){
-
-			    Set<String> set = new TreeSet<String>();
-                set.add(parameters.getString("nickName"));
-                GameHandler.getInstance().emit("removeLoggedUser", set);
-			}
-			
-			else if (cmd.equals("ADD_ROOM_TO_BATTLE_LIST")){
-                Room newRoom = new Room(parameters.getInt("roomSid"), parameters.getString("roomName"),"",parameters.getString("hostNickName"),1);
-                String args = formatArgs(""+parameters.getBoolean("needPwd"),parameters.getString("hostNickName"),parameters.getString("roomName"), ""+parameters.getInt("numOfPlayers"), ""+parameters.getInt("roomSid"), ""+parameters.getBoolean("isPlaying"));
-                String content = String.format("{\"name\":\"%s\",\"args\":[%s]}","addRoom", args);
-                PlayersController.getPlayer(this.userId).broadcastToSocketIOClients(content);
-            }
-			
-			else if (cmd.equals("REMOVE_ROOM_FROM_BATTLE_LIST")){
-                String content = formatContent("removeRoom", ""+parameters.getInt("roomSid"));
-                PlayersController.getPlayer(this.userId).broadcastToSocketIOClients(content);
+			else{
+                System.err.println("this message is not being handled");
             }
 			
 		
@@ -110,10 +92,9 @@ public class DarkstarChannelListener implements ClientChannelListener {
 		}
 	}
 	
-	private String formatContent(String command, String... args){
-	    String argsString = formatArgs(args);
-        return String.format("{\"name\":\"%s\",\"args\":[%s]}",command, argsString);
-
+	private void sendToClient(String cmd, String args){
+	    String content = String.format("{\"name\":\"%s\",\"args\":%s}",cmd, args);
+        PlayersController.getPlayer(this.userId).broadcastToSocketIOClients(content);
 	}
 	
 	private String formatArgs(String... args){

@@ -130,10 +130,7 @@ public class GameHandler extends IOHandlerAbs {
 		else if (eventName.equals("logout")) {
 			JSONArray argsArray = jsonObject.getJSONArray("args");
 			String userId= argsArray.getString(0);
-			boolean loggedOut=false;
 			PlayersController.removePlayer(userId);
-			loggedOut = true;
-			PlayersController.broadcastLoggedPlayers();
 		}
 	}
 

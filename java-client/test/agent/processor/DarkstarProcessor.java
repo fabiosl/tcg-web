@@ -109,21 +109,6 @@ public class DarkstarProcessor {
 		requestJoinChannel(userId, "LobbyChannel");
 	}
 	
-	public void loadRoomList(JSONObject jsonObj){
-    	try{
-    	    JSONObject parameters = jsonObj.getJSONObject("parameters");
-    	    JSONArray roomsJsonArray = parameters.getJSONArray("rooms");
-    	    
-    	    Set<String> result = new TreeSet<String>();
-    	    for (int i = 0; i < roomsJsonArray.length(); i++) {
-    	        JSONObject roomJson = roomsJsonArray.getJSONObject(i);
-    	        result.add(roomJson.toString());
-    	    }   
-    	    GameHandler.getInstance().emit("updateRooms", result);
-    	} catch (JSONException e) {
- 	        e.printStackTrace();
-    	}
-	}
 	 
     public void requestJoinChannel(String userId,String channelName) {
     	try {																			
@@ -150,33 +135,24 @@ public class DarkstarProcessor {
 		}
     }
 	
-	public void processCommand(JSONObject jsonObj) {
+	public void processCommand(JSONObject jsonObj,String plainText) {
 		try {
+		    String userId = Util.getStringFromJson(jsonObj, "userId");
 			String cmd = Util.getStringFromJson(jsonObj, "cmd");
 			if (("INIT_PLAYER_DATA").equals(cmd)) {		
-				String userId = Util.getStringFromJson(jsonObj, "userId");
 				JSONObject jsonObjNest = jsonObj.getJSONObject("parameters");
 				if (jsonObjNest.getBoolean("success")) {						
 					loadGotoLobby(jsonObj,userId);
 				}
 			} else if (("LOAD_PLAYER_LIST").equals(cmd)) {						
-				JSONObject parameters = jsonObj.getJSONObject("parameters");
-				JSONArray playersJsonArray = parameters.getJSONArray("playerList");
-				Set<String> players = new TreeSet<String>();
-				for (int i = 0; i < playersJsonArray.length(); i++) {
-				    JSONObject playerJson = playersJsonArray.getJSONObject(i);
-				    String playerName = playerJson .getString("nickName");
-				    players.add(playerName);
-				}
-				GameHandler.getInstance().emit("updateLoggedUsers", players);
-//				PlayersController.broadcastLoggedPlayers();
-				
+			    String content = String.format("{\"name\":\"%s\",\"args\":%s}",cmd, plainText);
+                PlayersController.getPlayer(userId).broadcastToSocketIOClients(content);				
 			}
 			else if (("CREATE_ROOM").equals(cmd)) {
 				//TODO: Do i need to do something here?
 			}
 			else if (("LOAD_ROOM_LIST").equals(cmd)) {
-			    loadRoomList(jsonObj);
+			    sendToClient(userId, cmd, plainText);
             }
             
 			
@@ -196,4 +172,10 @@ public class DarkstarProcessor {
 //			}
 		} catch (JSONException e) {e.printStackTrace();}
 	}
+	   
+    private void sendToClient(String userId, String cmd, String args){
+        String content = String.format("{\"name\":\"%s\",\"args\":%s}",cmd, args);
+        PlayersController.getPlayer(userId).broadcastToSocketIOClients(content);
+    }
+    
 }

@@ -38,7 +38,7 @@ public class ClientListener implements SimpleClientListener {
 			JSONObject jsonObj;
 			jsonObj = new JSONObject(decodedMessage);
 			jsonObj.append("userId", this.userId);
-			DarkstarProcessor.getInstance().processCommand(jsonObj);						
+			DarkstarProcessor.getInstance().processCommand(jsonObj, decodedMessage);						
 			//		sendToAgent(decodedMessage); TODO	
 		}catch (JSONException e) {
 			e.printStackTrace();
